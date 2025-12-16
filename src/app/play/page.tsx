@@ -2312,7 +2312,7 @@ function PlayPageClient() {
               <div className='relative w-full h-[300px] lg:h-full'>
                 <div
                   ref={artRef}
-                  className='bg-black w-full h-full overflow-hidden shadow-lg'
+                  className='bg-black w-full h-full rounded-xl overflow-hidden shadow-lg'
                 ></div>
 
                 {/* 弹幕选择器 */}
@@ -2400,7 +2400,7 @@ function PlayPageClient() {
             </div>
 
             {/* 选集和换源 */}
-            <div className='h-[300px] lg:h-full md:overflow-hidden md:col-span-1'>
+            <div className='h-[300px] lg:h-full md:overflow-hidden transition-all duration-300 ease-in-out md:col-span-1 lg:opacity-100 lg:scale-100'>
               <EpisodeSelector
                 totalEpisodes={totalEpisodes}
                 episodes_titles={detail?.episodes_titles || []}
