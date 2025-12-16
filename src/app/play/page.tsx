@@ -168,7 +168,10 @@ function PlayPageClient() {
   const videoYearRef = useRef(videoYear);
   const detailRef = useRef<SearchResult | null>(detail);
   const currentEpisodeIndexRef = useRef(currentEpisodeIndex);
-
+  // 折叠状态（仅在 lg 及以上屏幕有效）
+  const [isEpisodeSelectorCollapsed, setIsEpisodeSelectorCollapsed] =
+    useState(false);
+  
   useEffect(() => {
     if (!selectedDanmakuAnime || !detail) return;
   
