@@ -2255,10 +2255,10 @@ function PlayPageClient() {
 
   return (
     <PageLayout activePath='/play'>
-{/* 第二行：播放器和选集 */}
-        <div className='space-y-2'>
-          {/* 折叠控制 - 仅在 lg 及以上屏幕显示 */}
-          <div className='hidden lg:flex justify-end'>
+      <div className='flex flex-col px-0 lg:px-[5rem] 2xl:px-32'>
+        {/* 播放器和选集 */}
+        <div>
+         <div className='hidden lg:flex justify-end'>
             <button
               onClick={() =>
                 setIsEpisodeSelectorCollapsed(!isEpisodeSelectorCollapsed)
@@ -2295,7 +2295,6 @@ function PlayPageClient() {
               ></div>
             </button>
           </div>
-
           <div
             className={`grid gap-4 lg:h-[500px] xl:h-[650px] 2xl:h-[750px] transition-all duration-300 ease-in-out ${isEpisodeSelectorCollapsed
               ? 'grid-cols-1'
@@ -2310,12 +2309,46 @@ function PlayPageClient() {
               <div className='relative w-full h-[300px] lg:h-full'>
                 <div
                   ref={artRef}
-                  className='bg-black w-full h-full rounded-xl overflow-hidden shadow-lg'
+                  className='bg-black w-full h-full overflow-hidden shadow-lg'
                 ></div>
+
+                {/* 弹幕选择器 */}
+                {showDanmakuSelector && (
+                  <DanmakuSelector
+                    videoTitle={videoTitle}
+                    isVisible={showDanmakuSelector}
+                    currentEpisode={currentEpisodeIndex + 1}
+                    currentEpisodeTitle={
+                      detail?.episodes_titles?.[currentEpisodeIndex]
+                    }
+                    onSelect={async (
+                      anime: AnimeOption,
+                      episodeNumber?: number
+                    ) => {
+                      const sourceName = anime.animeTitle;
+                      setSelectedDanmakuSource(sourceName);
+                      selectedDanmakuSourceRef.current = sourceName;
+                      setShowDanmakuSelector(false);
+                      setSelectedDanmakuAnime(anime);
+                      setSelectedDanmakuEpisode(episodeNumber);
+                      setSelectedState(true);
+                    }}
+                    onClose={() => {
+                      setShowDanmakuSelector(false)
+                      // 更新 tooltip
+                      if (artPlayerRef.current) {
+                        artPlayerRef.current.setting.update({
+                          name: "弹幕源",
+                          tooltip: currentTooltip|| '未选择',
+                        });
+                      }
+                    }}
+                  />
+                )}
 
                 {/* 换源加载蒙层 */}
                 {isVideoLoading && (
-                  <div className='absolute inset-0 bg-black/85 backdrop-blur-sm rounded-xl flex items-center justify-center z-[500] transition-all duration-300'>
+                  <div className='absolute inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-[500] transition-all duration-300'>
                     <div className='text-center max-w-md mx-auto px-6'>
                       {/* 动画影院图标 */}
                       <div className='relative mb-8'>
@@ -2344,22 +2377,49 @@ function PlayPageClient() {
                         <p className='text-xl font-semibold text-white animate-pulse'>
                           {videoLoadingStage === 'sourceChanging'
                             ? '🔄 切换播放源...'
+                            : videoLoadingStage === 'optimizing'
+                            ? '⚡ 优选播放源...'
                             : '🔄 视频加载中...'}
                         </p>
                       </div>
                     </div>
                   </div>
                 )}
+                {/* 弹幕加载提示 */}
+                {isDanmakuLoading && (
+                  <div className="absolute top-4 left-4 right-4 z-[400] flex justify-center">
+                    <div className="bg-gray-800/90 text-white px-4 py-2 rounded-lg shadow-lg">
+                      正在自动加载弹幕...
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* 选集和换源 - 在移动端始终显示，在 lg 及以上可折叠 */}
-            <div
-              className={`h-[300px] lg:h-full md:overflow-hidden transition-all duration-300 ease-in-out ${isEpisodeSelectorCollapsed
-                ? 'md:col-span-1 lg:hidden lg:opacity-0 lg:scale-95'
-                : 'md:col-span-1 lg:opacity-100 lg:scale-100'
-                }`}
-            >
+            {/* 选集和换源 */}
+            <div className='h-[300px] lg:h-full md:overflow-hidden md:col-span-1'>
+              <EpisodeSelector
+                totalEpisodes={totalEpisodes}
+                episodes_titles={detail?.episodes_titles || []}
+                value={currentEpisodeIndex + 1}
+                onChange={handleEpisodeChange}
+                onSourceChange={handleSourceChange}
+                currentSource={currentSource}
+                currentId={currentId}
+                videoTitle={searchTitle || videoTitle}
+                availableSources={availableSources}
+                sourceSearchLoading={sourceSearchLoading}
+                sourceSearchError={sourceSearchError}
+                precomputedVideoInfo={precomputedVideoInfo}
+                preferBestSource={preferBestSource}
+                setLoading={setLoading}
+                setIsVideoLoading={setIsVideoLoading}
+                setVideoLoadingStage={setVideoLoadingStage}
+              />
+            </div>
+          </div>
+        </div>
+
         {/* 详情展示 */}
         <div className='grid grid-cols-1 gap-4'>
           {/* 文字区 */}
