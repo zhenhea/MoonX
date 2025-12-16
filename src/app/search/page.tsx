@@ -584,14 +584,6 @@ const sortedAggregatedResults: { exact: [string, SearchResult[]][], others: [str
         <div className="mb-7 max-w-2xl mx-auto md:hidden">
           <div className="flex items-center">
             {/* 搜索源选择器 - 在搜索框左侧，作为一个整体 */}
-            <div className="flex-shrink-0">
-              <SourceSelector
-                selectedSources={searchSources}
-                onChange={setSearchSources}
-                openFilter={openFilter}
-                setOpenFilter={setOpenFilter}
-              />
-            </div>
             
             {/* 搜索框 */}
             <form onSubmit={handleSearch} className="flex-1 relative">
